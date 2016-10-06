@@ -34,6 +34,11 @@
 - name: debug stdout
   debug: msg="{{ kube_api }}"
 
+- name: stat for existing kubelet config
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: worker_kubelet
+
 - name: join workers to the initialized kubernetes cluster
   shell: "kubeadm join --token {{ init_token }} {{ kube_api }}"
-  when: inventory_hostname in groups['kube-workers']
+  when: inventory_hostname in groups['kube-workers'] and worker_kubelet.stat.exists == false
