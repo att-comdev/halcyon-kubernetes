@@ -1,0 +1,39 @@
+---
+
+- name: Install Apt and HTTP Certs
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "apt-transport-https"
+    - "ca-certificates"
+
+- name: Install APT Key
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+
+- name: Add Apt Repository
+  apt_repository:
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+    state: present
+
+- name: Install Docker
+  apt:
+    name: docker-engine
+    state: present
+    update_cache: true
+
+- name: Install Docker Compose
+  shell: curl -L https://github.com/docker/compose/releases/download/1.8.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+- name: Set Permissions on Docker Compose
+  file:
+    path: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+    enabled: false

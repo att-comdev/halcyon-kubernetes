@@ -1,0 +1,18 @@
+---
+
+- name: install the gpg key for kubeadm
+  apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present
+
+- name: add the kubeadm apt repository
+  apt_repository:
+    repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+
+- name: install kubeadm and required prereqs
+  apt: name={{ item }} update_cache=yes state=present state=latest
+  with_items:
+  - docker.io
+  - kubelet
+  - kubeadm
+  - kubectl
+  - kubernetes-cni

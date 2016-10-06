@@ -1,0 +1,52 @@
+---
+# Copyright 2016, JinkIT, and it's Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+
+
+- name: run kubeadm master
+  command: kubeadm init --token {{ init_token }}
+  become: true
+  when: role == "kube-masters"
+
+- hosts: master
+  tasks:
+  - name: Start Docker
+    service: enabled=yes state=started name=docker
+    become: true
+  - name: Start Kubelet
+    service: enabled=yes state=started name=kubelet
+    become: true
+  - name: run kubeadm master
+    command: kubeadm init --token {{ init_token }}
+    become: true
+
+- hosts: nodes
+  vars:
+    init_token: foobar.1234
+  tags: nodes
+  tasks:
+  - name: Start Docker
+    service: enabled=yes state=started name=docker
+    become: true
+  - name: Start Kubelet
+    service: enabled=yes state=started name=kubelet
+    become: true
+  - name: Debug master_node IP
+    debug: msg='master node IP is {{ hostvars['master_node'].ansible_default_ipv4.address }}'
+  - name: Run Kubeadm nodes
+    command: kubeadm join --token {{ init_token }} --api-advertise-addresses {{ hostvars['master_node'].ansible_['public_iface']_ipv4.address }}
+    become: true
