@@ -19,22 +19,21 @@
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['kube-masters'] }}"
-  register: kube_api_endpoint_fact
-#  when: inventory_hostname in groups['kube-workers']
-
-- name: setting fact for master api endpoints
-  set_fact:
-    kube_api_endpoint: "{{ kube_api_endpoint_fact }}"
-
-#- name: collect api endpoint from masters
-#  shell: ip addr show {{ public_iface }} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
-#  register: kube_api_endpoint
-#  when: inventory_hostname in groups['kube-masters']
+  register: kube_api_endpoint
 
 - name: kubernetes master api endpoints
-  debug: var=kube_api_endpoint.stdout
+  debug: var=item.stdout
+  with_items: "{{ kube_api_endpoint.results }}"
 #  when: inventory_hostname in groups['kube-workers']
 
-#- name: join workers to the initialized kubernetes cluster
-#  shell: "kubeadm join --token {{ init_token }} {{ kube_api_endpoint.stdout }}"
-#  when: inventory_hostname in groups['kube-workers']
+- name: setting fact
+  set_fact:
+    kube_api: "{{ item.stdout }}"
+  with_items: "{{ kube_api_endpoint.results }}"
+
+- name: debug stdout
+  debug: msg="{{ kube_api }}"
+
+- name: join workers to the initialized kubernetes cluster
+  shell: "kubeadm join --token {{ init_token }} {{ kube_api }}"
+  when: inventory_hostname in groups['kube-workers']
