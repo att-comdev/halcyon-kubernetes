@@ -12,7 +12,7 @@ Ansible playbooks for a kubadm-based kubernetes deployment, on supporting any cl
   * Virtualbox Extensions for 5.0
   * Ansible (version 2.1.1 and 2.1.2 tested)
   * Vagrant (1.8.4 or higher)
-    - Following Vagrant Plugins:
+    - Following Vagrant Plugins (installed for you during first deploy):
       * vagrant-env
       * vagrant-git
       * vagrant-openstack-provider
