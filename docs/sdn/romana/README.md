@@ -10,20 +10,24 @@
 `sudo -i`
 
 4. Download each of the manifests:
+```
 files=(
     https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-services-manifest.yml
     https://raw.githubusercontent.com/romana/romana/master/containerize/specs/romana-agent-daemonset.yml
 )
 wget "${files[@]}"
+```
 
 5. Edit the Romana Services manifest:
-```
-vi romana-services-manifest.yml
+`vi romana-services-manifest.yml`
 --> Change this
+```
     args:
     # - --cidr=10.0.0.0/8
     env:
+```
 --> To this
+```
     args:
     - --cidr=10.0.0.0/8
     - --interface=enp0s8
@@ -35,13 +39,15 @@ vi romana-services-manifest.yml
 `cp romana-services-manifest.yml /etc/kubernetes/manifests`
 
 7. Edit the Romana Agent Manifest:
+`vi romana-agent-daemonset.yml`
+--> Change this:
 ```
-vi romana-agent-daemonset.yml
---> Change this
         args:
         # - --romana-root=http://romana-root:9600
         securityContext:
+```
 --> To this
+```
         args:
         - --romana-root=http://172.16.35.11:9600
         - --interface=enp0s8
