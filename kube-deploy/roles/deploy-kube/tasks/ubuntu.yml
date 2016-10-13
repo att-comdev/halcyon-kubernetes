@@ -16,3 +16,16 @@
   - kubeadm
   - kubectl
   - kubernetes-cni
+
+- name: add kubelet.service drop-in for hostname override
+  template: src="15-hostname-override.conf.j2" dest="/etc/systemd/system/kubelet.service.d/15-hostname-override.conf" mode=0640
+  when: kubelet_hostname_override
+  register: kho
+
+- name: reload systemd config
+  command: systemctl daemon-reload
+  when: kho.changed
+
+- name: restart kubelet service
+  service: name=kubelet state=restarted
+  when: kho.changed

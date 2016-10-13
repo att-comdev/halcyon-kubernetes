@@ -17,3 +17,4 @@
 bootstrap_os: ubuntu
 init_token: fa7ed3.c5debcef8dd01970
 public_iface: enp0s8
+kubelet_hostname_override: true
