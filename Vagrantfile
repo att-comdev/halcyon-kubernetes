@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 # NOTE: Variable overrides are in ./config.rb
 require "yaml"
-require "vagrant-openstack-provider"
 require "fileutils"
 
 # Use a variable file for overrides:
@@ -31,6 +30,9 @@ end
 if missing_plugins_installed
   exec "vagrant #{ARGV.join(" ")}"
 end
+
+# Use plugins after install / re-run
+require "vagrant-openstack-provider"
 
 # Vagrantfile API/sytax version. Don’t touch unless you know what you’re doing!
 VAGRANTFILE_API_VERSION = "2"
