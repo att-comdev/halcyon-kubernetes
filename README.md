@@ -19,6 +19,23 @@ Ansible playbooks for a kubadm-based kubernetes deployment, on supporting any cl
 
 Please see /docs/README.md for more information about SDN providers, plugins, and other useful information. Pull requests are welcome!
 
+## Instructions
+To use this project, simply use vagrant to bring up your environment:
+
+```
+v1k0d3n@machine:~ $ git clone https://github.com/att-comdev/halcyon-kubernetes.git
+v1k0d3n@machine:~ $ cd halcyon-kubernetes
+v1k0d3n@machine:~ $ vagrant up
+```
+
+When you want to use Openstack, edit the options in `./config.rb` to match your Openstack project, and deploy with the `--provider=openstack` flag:
+
+```
+v1k0d3n@machine:~ $ vagrant up --provider=openstack
+```
+
+NOTE: Please look over the options in `config.rb` for modifying number of nodes, subnet, and other information and if you want to make any modifications to the Ansible deployment, make changes to the `./kube-deploy/group_vars/all.yml` file.
+
 # TODO
 
 * Add CentOS Support
