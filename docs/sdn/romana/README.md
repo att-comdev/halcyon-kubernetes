@@ -32,7 +32,6 @@ wget "${files[@]}"
     - --cidr=10.0.0.0/8
     - --interface=enp0s8
     env:
----
 ```
 
 6. Install the manifest (using Kubernetes Add-Ons method):
@@ -54,7 +53,6 @@ wget "${files[@]}"
         - --romana-root=http://172.16.35.11:9600
         - --interface=enp0s8
         securityContext:
----
 ```
 
 8. Lastly, install the Daemonset:
