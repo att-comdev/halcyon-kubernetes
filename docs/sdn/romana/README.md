@@ -40,12 +40,14 @@ wget "${files[@]}"
 
 7. Edit the Romana Agent Manifest:
 `vi romana-agent-daemonset.yml`
+<br>
 --> Change this:
 ```
         args:
         # - --romana-root=http://romana-root:9600
         securityContext:
 ```
+<br>
 --> To this
 ```
         args:
