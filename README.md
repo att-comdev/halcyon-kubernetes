@@ -1,5 +1,5 @@
 # halcyon-kubernetes
-Please see [release notes](https://github.com/att-comdev/halcyon-kubernetes/releases) for current features.
+Please see [release notes](https://github.com/att-comdev/halcyon-kubernetes/releases) for current and planned features.
 
 Ansible playbooks for a kubadm-based kubernetes deployment, on supporting any cloud and any kubeadm-enabled OS.
 
