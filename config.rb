@@ -11,8 +11,9 @@ $forwarded_ports   = {}
 #$number_etcd       = "kube[1:2]"
 #$number_master     = "kube[1:2]"
 #$number_worker     = "kube[1:3]"
-$kube_masters     = "kube1"
-$kube_workers     = "kube[2:3]"
+$kube_masters      = "kube1"
+$kube_workers      = "kube[2:3]"
+$kube_control      = "kube1"
 
 # Virtualbox leave / Openstack change to OS default username:
 $ssh_user          = "ubuntu"

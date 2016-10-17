@@ -18,3 +18,10 @@ bootstrap_os: ubuntu
 init_token: fa7ed3.c5debcef8dd01970
 public_iface: enp0s8
 kubelet_hostname_override: true
+
+# Kubernetes Control Host:
+kubectl_endpoint: kube1
+
+# Kubernetes SDN Deployment:
+kube_sdn_deploy: true
+kube_sdn: weave

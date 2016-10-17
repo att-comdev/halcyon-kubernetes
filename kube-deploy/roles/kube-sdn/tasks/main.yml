@@ -1,0 +1,59 @@
+---
+# Copyright 2016, JinkIT, and it's Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+- name: stat for existing sdn deployment
+  stat:
+    path: /etc/kubernetes/halcyon/network/.bootstrapped
+  register: sdn_exists
+
+- name: run calico plays
+  include: kube-calico.yml
+
+- name: run canal plays
+  include: kube-canal.yml
+
+- name: run romana plays
+  include: kube-romana.yml
+
+- name: check for existing weave deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("weave")
+  register: sdn_deployed_weave
+  ignore_errors: true
+
+- include: kube-weave.yml
+  when: (kube_sdn_deploy) and (not '{{ item }}')
+    with_items:
+      - sdn_deployed_calico
+      - sdn_deployed_canal
+      - sdn_deployed_romana
+      - sdn_deployed_weave
+
+- name: ensure sdn bootstrap directory exists
+  file: path=/etc/kubernetes/halcyon/network state=directory
+  when: (kube_sdn_deploy == 'true') and (sdn_exists.stat.exists == 'false')
+  ignore_errors: true
+
+- name: creating sdn deployment artifact
+  template:
+    src: templates/bootstrap-sdn.j2
+    dest: /etc/kubernetes/halcyon/network/.bootstrapped
+    backup: no
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  when: (kube_sdn_deploy) and (sdn_exists.stat.exists == 'false')
+  ignore_errors: true
