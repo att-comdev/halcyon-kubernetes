@@ -14,42 +14,13 @@
 # limitations under the License.
 #
 
-- hosts: all
-  gather_facts: false
-  become: yes
-  roles:
-    - upgrade-os
-  tags:
-    - upgrade-os
 
-- hosts: all
-  gather_facts: true
-  become: yes
-  roles:
-    - deploy-kube
-  tags:
-    - deploy-kube
+- name: deploying weave for kubernetes
+  shell: kubectl apply -f https://git.io/weave-kube
+  register: deploy_weave
+  when: (kube_sdn == 'weave')
+  ignore_errors: true
 
-- hosts: kube-masters
-  gather_facts: true
-  become: yes
-  roles:
-    - kube-init
-  tags:
-    - kube-init
-
-- hosts: all
-  gather_facts: true
-  become: yes
-  roles:
-    - kube-join
-  tags:
-    - kube-join
-
-- hosts: kube-control
-  gather_facts: true
-  become: yes
-  roles:
-    - kube-sdn
-  tags:
-    - kube-sdn
+- name: weave deployment stdout
+  debug: msg={{ deploy_weave }}
+  ignore_errors: true

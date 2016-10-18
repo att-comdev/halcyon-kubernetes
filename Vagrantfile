@@ -68,7 +68,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       $forwarded_ports.each do |guest, host|
         kube.vm.network "forwarded_port", guest: guest, host: host, auto_correct: true
       end
-      # Openstack Provider (Optional --provider=openstack):
+      # Virtualbox Provider (Default --provider=virtualbox):
       kube.vm.provider "virtualbox" do |vb|
         vb.name = "kube#{kb}"
         vb.customize ["modifyvm", :id, "--memory", $kube_memory]
@@ -98,12 +98,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         ansible.playbook          = $ansible_playbook
         ansible.host_key_checking = false
         ansible.groups            = {
-          # The first three nodes should be etcd servers
-          #"etcd" => [$number_etcd],
-          # The first two nodes should be masters
+          # Kube-Master hosts (currently kubeadm limitations to kube1):
           "kube-masters" => [$kube_masters],
-          # all nodes should be kube nodes
+          # Kube-Worker hosts (all):
           "kube-workers" => [$kube_workers],
+          # Kube-Control is your primary `kubectl` host:
+          "kube-control" => [$kube_control],
           "kube-cluster:children" => ["kube-masters", "kube-workers"],
         }
         # Additional Ansible tools for debugging:

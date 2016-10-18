@@ -1,0 +1,131 @@
+---
+# Copyright 2016, JinkIT, and it's Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+
+- name: check for an existing sdn deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  register: kube_podlist
+  ignore_errors: true
+
+- name: stat for existing sdn deployment
+  stat:
+    path: /etc/kubernetes/halcyon/network/.bootstrapped
+  register: sdn_exists
+
+- name: check for existing weave deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("weave")
+  register: sdn_deployed_weave
+  ignore_errors: true
+
+- name: Set Fact when Weave is deployed
+  set_fact:
+    weave_deployed: true
+  when: sdn_deployed_weave|changed
+
+- name: check for existing Calico deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("calico")
+  register: sdn_deployed_calico
+  ignore_errors: true
+
+- name: Set Fact when Calico is deployed
+  set_fact:
+    calico_deployed: true
+  when: sdn_deployed_calico|changed
+
+- name: check for existing Canal deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("canal")
+  register: sdn_deployed_canal
+  ignore_errors: true
+
+- name: Set Fact when Canal is deployed
+  set_fact:
+    canal_deployed: true
+  when: sdn_deployed_canal|changed
+
+- name: check for existing Romana deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("Romana")
+  register: sdn_deployed_romana
+  ignore_errors: true
+
+- name: Set Fact when Romana is deployed
+  set_fact:
+    romana_deployed: true
+  when: sdn_deployed_romana|changed
+
+
+#Local Debugging --- Look at variable contents
+- name: Debug all variables
+  debug:
+    msg: "Weave: {{ sdn_deployed_weave }} - /n Calico: {{ sdn_deployed_calico }} - /n Canal: {{ sdn_deployed_canal }} - /n Romana: {{ sdn_deployed_romana }}"
+
+
+#Run SDN Specific Playbooks only if no SDN is installed yet. If existing SDN, skip.
+- name: Deploy Weave
+  include: kube-weave.yml
+  when: (kube_sdn_deploy and {{ item }}|skipped) and ()
+  with_items:
+    - sdn_deployed_calico
+    - sdn_deployed_canal
+    - sdn_deployed_romana
+    - sdn_deployed_weave
+
+- name: Deploy Calico
+  include: kube-calico.yml
+  when: (kube_sdn_deploy and {{ item }}|skipped) and ({{ item }}|changed)
+  with_items:
+    - sdn_deployed_calico
+    - sdn_deployed_canal
+    - sdn_deployed_romana
+    - sdn_deployed_weave
+
+- name: Deploy Canal
+  include: kube-canal.yml
+  when: (kube_sdn_deploy) and ({{ item }}|skipped) and ({{ item }}|changed)
+  with_items:
+    - sdn_deployed_calico
+    - sdn_deployed_canal
+    - sdn_deployed_romana
+    - sdn_deployed_weave
+
+- name: Deploy Romana
+  include: kube-romana.yml
+  when: (kube_sdn_deploy) and ({{ item }}|skipped) and ({{ item }}|changed)
+  with_items:
+    - sdn_deployed_calico
+    - sdn_deployed_canal
+    - sdn_deployed_romana
+    - sdn_deployed_weave
+
+- name: ensure sdn bootstrap directory exists
+  file: path=/etc/kubernetes/halcyon/network state=directory
+  when: (kube_sdn_deploy == 'true') and (sdn_exists.stat.exists == 'false')
+  ignore_errors: true
+
+- name: creating sdn deployment artifact
+  template:
+    src: templates/bootstrap-sdn.j2
+    dest: /etc/kubernetes/halcyon/network/.bootstrapped
+    backup: no
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  when: (kube_sdn_deploy) and (sdn_exists.stat.exists == 'false')
+  ignore_errors: true
