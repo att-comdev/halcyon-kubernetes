@@ -15,7 +15,7 @@
 #
 
 
-
+#Checks for current SDN Deployment, if no deployment exists, deploy SDN defined in group_vars/all
 - name: check for an existing sdn deployment
   shell: kubectl get pods -o wide --all-namespaces
   register: kube_podlist
@@ -32,10 +32,15 @@
   register: sdn_deployed_weave
   ignore_errors: true
 
-- name: Set Fact when Weave is deployed
+- name: set fact when weave is deployed
   set_fact:
     weave_deployed: true
   when: sdn_deployed_weave|changed
+
+- name: set fact when weave is not deployed
+  set_fact:
+    weave_deployed: false
+  when: sdn_deployed_weave|skipped
 
 - name: check for existing Calico deployment
   shell: kubectl get pods -o wide --all-namespaces
@@ -43,76 +48,86 @@
   register: sdn_deployed_calico
   ignore_errors: true
 
-- name: Set Fact when Calico is deployed
+- name: set Fact when calico is deployed
   set_fact:
     calico_deployed: true
   when: sdn_deployed_calico|changed
 
-- name: check for existing Canal deployment
+- name: set Fact when calico is not deployed
+  set_fact:
+    calico_deployed: false
+  when: sdn_deployed_calico|skipped
+
+- name: check for existing canal deployment
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("canal")
   register: sdn_deployed_canal
   ignore_errors: true
 
-- name: Set Fact when Canal is deployed
+- name: set fact when canal is deployed
   set_fact:
     canal_deployed: true
   when: sdn_deployed_canal|changed
 
-- name: check for existing Romana deployment
+- name: set fact when canal is not deployed
+  set_fact:
+    canal_deployed: false
+  when: sdn_deployed_canal|skipped
+
+- name: check for existing romana deployment
   shell: kubectl get pods -o wide --all-namespaces
   when: kube_podlist.stdout | search("Romana")
   register: sdn_deployed_romana
   ignore_errors: true
 
-- name: Set Fact when Romana is deployed
+- name: set fact when romana is deployed
   set_fact:
     romana_deployed: true
   when: sdn_deployed_romana|changed
 
+- name: set fact when Romana is not deployed
+  set_fact:
+    romana_deployed: false
+  when: sdn_deployed_romana|skipped
 
-#Local Debugging --- Look at variable contents
-- name: Debug all variables
-  debug:
-    msg: "Weave: {{ sdn_deployed_weave }} - /n Calico: {{ sdn_deployed_calico }} - /n Canal: {{ sdn_deployed_canal }} - /n Romana: {{ sdn_deployed_romana }}"
 
 
-#Run SDN Specific Playbooks only if no SDN is installed yet. If existing SDN, skip.
-- name: Deploy Weave
+#Run SDN Specific Playbooks only if no SDN is installed. Checks also if particular SDN is installed.
+- name: deploy weave
   include: kube-weave.yml
-  when: (kube_sdn_deploy and {{ item }}|skipped) and ()
+  when: kube_sdn_deploy and weave_deployed == false and {{ item }} == false and kube_sdn == "weave"
   with_items:
-    - sdn_deployed_calico
-    - sdn_deployed_canal
-    - sdn_deployed_romana
-    - sdn_deployed_weave
+    - calico_deployed
+    - weave_deployed
+    - romana_deployed
+    - canal_deployed
 
-- name: Deploy Calico
+- name: deploy calico
   include: kube-calico.yml
-  when: (kube_sdn_deploy and {{ item }}|skipped) and ({{ item }}|changed)
+  when: kube_sdn_deploy and calico_deployed == false and {{ item }} == false and kube_sdn == "calico"
   with_items:
-    - sdn_deployed_calico
-    - sdn_deployed_canal
-    - sdn_deployed_romana
-    - sdn_deployed_weave
+    - calico_deployed
+    - weave_deployed
+    - romana_deployed
+    - canal_deployed
 
-- name: Deploy Canal
+- name: ceploy canal
   include: kube-canal.yml
-  when: (kube_sdn_deploy) and ({{ item }}|skipped) and ({{ item }}|changed)
+  when: kube_sdn_deploy and canal_deployed == false and {{ item }} == false and kube_sdn == "canal"
   with_items:
-    - sdn_deployed_calico
-    - sdn_deployed_canal
-    - sdn_deployed_romana
-    - sdn_deployed_weave
+    - calico_deployed
+    - weave_deployed
+    - romana_deployed
+    - canal_deployed
 
-- name: Deploy Romana
+- name: deploy romana
   include: kube-romana.yml
-  when: (kube_sdn_deploy) and ({{ item }}|skipped) and ({{ item }}|changed)
+  when: kube_sdn_deploy and romana_deployed == false and {{ item }} == false and kube_sdn == "romana"
   with_items:
-    - sdn_deployed_calico
-    - sdn_deployed_canal
-    - sdn_deployed_romana
-    - sdn_deployed_weave
+    - calico_deployed
+    - weave_deployed
+    - romana_deployed
+    - canal_deployed
 
 - name: ensure sdn bootstrap directory exists
   file: path=/etc/kubernetes/halcyon/network state=directory
@@ -126,6 +141,5 @@
     backup: no
     owner: root
     group: root
-    mode: "u=rw,g=r,o=r"
   when: (kube_sdn_deploy) and (sdn_exists.stat.exists == 'false')
   ignore_errors: true
