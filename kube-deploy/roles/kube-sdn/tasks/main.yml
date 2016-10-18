@@ -92,7 +92,7 @@
 
 
 
-#Run SDN Specific Playbooks only if no SDN is installed. Checks also if particular SDN is installed.
+# Run SDN Specific Playbooks only if no SDN is installed. Checks also if particular SDN is installed.
 - name: deploy weave
   include: kube-weave.yml
   when: kube_sdn_deploy and weave_deployed == false and {{ item }} == false and kube_sdn == "weave"
