@@ -129,11 +129,6 @@
     - romana_deployed
     - canal_deployed
 
-- name: ensure sdn bootstrap directory exists
-  file: path=/etc/kubernetes/halcyon/network state=directory
-  when: (kube_sdn_deploy == 'true') and (sdn_exists.stat.exists == 'false')
-  ignore_errors: true
-
 - name: creating sdn deployment artifact
   template:
     src: templates/bootstrap-sdn.j2

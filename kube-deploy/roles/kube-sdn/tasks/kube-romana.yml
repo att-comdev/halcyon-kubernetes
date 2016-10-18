@@ -14,5 +14,45 @@
 # limitations under the License.
 #
 
-- name: placeholder for romana
-  debug: msg="romana"
+- name: romana installation
+  debug: msg="starting romana installation"
+
+- name: ensure sdn bootstrap directory exists
+#  file: path=/etc/kubernetes/halcyon/network state=directory
+#  when: kube_sdn_deploy
+#  ignore_errors: true
+  shell: mkdir -p /etc/kubernetes/halcyon/network
+  when: (kube_sdn == 'romana')
+  ignore_errors: true
+
+- name: copy romana services template
+  template:
+    src: templates/romana-services-manifest.j2
+    dest: /etc/kubernetes/halcyon/network/romana-services-manifest.yml
+    backup: yes
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  when: (kube_sdn == 'romana')
+  ignore_errors: true
+
+- name: copy romana daemonset template
+  template:
+    src: templates/romana-agent-daemonset.j2
+    dest: /etc/kubernetes/halcyon/network/romana-agent-daemonset.yml
+    backup: yes
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  when: (kube_sdn == 'romana')
+  ignore_errors: true
+
+- name: deploy the romana services manifest
+  shell: cp /etc/kubernetes/halcyon/network/romana-services-manifest.yml /etc/kubernetes/manifests/romana-services-manifest.yml
+  when: (kube_sdn == 'romana')
+
+- name: deploying romana for kubernetes
+  shell: kubectl apply -f /etc/kubernetes/halcyon/network/romana-agent-daemonset.yml
+  register: deploy_weave
+  when: (kube_sdn == 'romana')
+  ignore_errors: true

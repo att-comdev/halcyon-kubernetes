@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+- name: placeholder for weave
+  debug: msg="starting romana installation"
+
+- name: ensure sdn bootstrap directory exists
+  file: path=/etc/kubernetes/halcyon/network state=directory
+  when: (kube_sdn_deploy == 'true')
+  ignore_errors: true
 
 - name: deploying weave for kubernetes
   shell: kubectl apply -f https://git.io/weave-kube
