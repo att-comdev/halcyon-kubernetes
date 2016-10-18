@@ -15,7 +15,7 @@ spec:
         image: quay.io/romana/agent:v0.9.3.2
         args:
          - --romana-root=http://172.16.35.11:9600
-         - --interface=enp0s8
+         - --interface={{ public_iface }}
         securityContext:
           privileged: true
         volumeMounts:
