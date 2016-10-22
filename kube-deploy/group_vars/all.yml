@@ -24,4 +24,4 @@ kubectl_endpoint: kube1
 
 # Kubernetes SDN Deployment:
 kube_sdn_deploy: true
-kube_sdn: romana
+kube_sdn: weave 

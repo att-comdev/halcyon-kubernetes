@@ -15,7 +15,7 @@
 #
 
 - name: placeholder for weave
-  debug: msg="starting romana installation"
+  debug: msg="starting weave installation"
 
 - name: ensure sdn bootstrap directory exists
   file: path=/etc/kubernetes/halcyon/network state=directory
