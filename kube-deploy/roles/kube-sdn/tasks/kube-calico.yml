@@ -26,7 +26,7 @@
   ignore_errors: true
 
 - name: deploying weave for kubernetes
-  shell: kubectl apply -f http://docs.projectcalico.org/v1.5/getting-started/kubernetes/installation/hosted/calico.yaml
+  shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/master/v1.5/getting-started/kubernetes/installation/hosted/calico.yaml
   register: deploy_calico
   when: (kube_sdn == 'calico')
   ignore_errors: true

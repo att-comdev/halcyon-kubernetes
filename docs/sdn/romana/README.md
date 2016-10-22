@@ -1,3 +1,9 @@
+# Romana Documentation and Information:
+Romana is installed by default for this vagrant deployment to work around some of the NAT issues present with kubeadm/vagrant deployments. Since version 1.0.2, Romana is installed automatically for users per global_vars definitions. If you choose to install and learn on your own, feel free to continue to use the instructions below.
+
+# About Romana
+Romana has an interesting and simplistic approach towards providing policy to their SDN solution. It works in both Openstack and Kubernetes-based environments. More information [can be found at the following URL](http://romana.io/).
+
 # Romana Installation Instructions:
 
 1. First, install jq onto each of the hosts:

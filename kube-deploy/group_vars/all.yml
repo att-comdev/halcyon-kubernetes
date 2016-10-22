@@ -15,7 +15,7 @@
 #
 
 bootstrap_os: ubuntu
-init_token: fa7ed3.c5debcef8dd01970
+init_token: ac7da3.b2cofcda6ab01976
 public_iface: enp0s8
 kubelet_hostname_override: true
 
@@ -24,7 +24,7 @@ kubectl_endpoint: kube1
 
 # Kubernetes SDN Deployment:
 kube_sdn_deploy: true
-kube_sdn: canal
+kube_sdn: romana
 
 #Kubernetes Add-Ons
 kube_dashboard: true

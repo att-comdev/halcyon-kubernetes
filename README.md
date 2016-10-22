@@ -3,6 +3,15 @@ Please see [release notes](https://github.com/att-comdev/halcyon-kubernetes/rele
 
 Ansible playbooks for a kubadm-based kubernetes deployment, on supporting any cloud and any kubeadm-enabled OS.
 
+**FAIR WARNING:**
+There is currently a known issue with Vagrant and SDN deployments using NAT (the virtualbox deployment). See the following reported issues:
+
+  * [How to get kube-dns working in Vagrant cluster using kubeadm and Weave](http://stackoverflow.com/questions/39869583/how-to-get-kube-dns-working-in-vagrant-cluster-using-kubeadm-and-weave)
+  * [kube-dns not resolving names #33798](https://github.com/kubernetes/kubernetes/issues/33798)
+
+*These issues are upstream and will hopefully be resolved soon. Romana is enabled by default for Virtualbox/Vagrant/default deployments, because they have worked to address this issue and provide to this specific repository.*
+***This issue will not impact cloud-based deployments.***
+
 **Currently Supported:**
 
   * OS: Ubuntu 16.04 *(Centos 7 coming soon)*
