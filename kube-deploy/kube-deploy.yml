@@ -61,3 +61,11 @@
     - kube-sdn
   tags:
     - kube-sdn
+
+- hosts: kube-control
+  gather_facts: true
+  become: yes
+  roles:
+    - kube-addons
+  tags:
+    - kube-addons

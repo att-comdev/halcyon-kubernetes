@@ -6,6 +6,7 @@ Ansible playbooks for a kubadm-based kubernetes deployment, on supporting any cl
 **Currently Supported:**
 
   * OS: Ubuntu 16.04 *(Centos 7 coming soon)*
+  * Network Deployment Options  *(Calico, Canal, Romana, Weave)*
   * Providers: Virtualbox / Openstack *(AWS coming soon)*
 
 **Requirements:**
@@ -42,3 +43,4 @@ NOTE: Please look over the options in `config.rb` for modifying number of nodes,
 
 * Add CentOS Support
 * Add conditionals for various deployments (using vagrant --provider flags; such as AWS provider).
+* Work on SDN support for NAT environments.
