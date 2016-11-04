@@ -14,7 +14,6 @@ Ansible playbooks for a kubadm-based Kubernetes deployment, on supporting any cl
   * Ansible (version 2.1.1 and 2.1.2 tested)
   * BYOC (bring your own cloud environments)
 
-
 Please see /docs/README.md for more information about SDN providers, plugins, and other useful information. Pull requests are welcome!
 
 ## Instructions
