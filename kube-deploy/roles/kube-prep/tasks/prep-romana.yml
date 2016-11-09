@@ -14,9 +14,20 @@
 # limitations under the License.
 #
 
-- name: install romana sdn prerequisites
-  apt: name={{ item }} update_cache=yes state=present state=latest
-  with_items:
-  - jq
-  when: (kube_sdn == 'romana')
+- name: add route for service cluster ip range
+  shell: ip route add 10.96.0.0/12 dev {{ public_iface }}
+  when: not (public_iface == nat_iface)
   ignore_errors: true
+
+- name: pull romana container for master
+  shell: docker pull {{ item }}
+  with_items:
+  - "mysql:5"
+  - "quay.io/romana/services:{{ romana_version }}"
+  when: inventory_hostname in groups['kube-masters']
+
+- name: pull romana containers for nodes
+  shell: docker pull {{ item }}
+  with_items:
+  - "quay.io/romana/agent:{{ romana_version }}"
+  - "quay.io/romana/cni:{{ romana_version }}"
