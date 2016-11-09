@@ -25,34 +25,19 @@
   when: (kube_sdn == 'romana')
   ignore_errors: true
 
-- name: copy romana services template
+- name: copy romana template
   template:
-    src: templates/romana-services-manifest.j2
-    dest: /etc/kubernetes/halcyon/network/romana-services-manifest.yml
+    src: templates/romana.j2
+    dest: /etc/kubernetes/halcyon/network/romana.yml
     backup: yes
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
   when: (kube_sdn == 'romana')
   ignore_errors: true
-
-- name: copy romana daemonset template
-  template:
-    src: templates/romana-agent-daemonset.j2
-    dest: /etc/kubernetes/halcyon/network/romana-agent-daemonset.yml
-    backup: yes
-    owner: root
-    group: root
-    mode: "u=rw,g=r,o=r"
-  when: (kube_sdn == 'romana')
-  ignore_errors: true
-
-- name: deploy the romana services manifest
-  shell: cp /etc/kubernetes/halcyon/network/romana-services-manifest.yml /etc/kubernetes/manifests/romana-services-manifest.yml
-  when: (kube_sdn == 'romana')
 
 - name: deploying romana for kubernetes
-  shell: kubectl apply -f /etc/kubernetes/halcyon/network/romana-agent-daemonset.yml
+  shell: kubectl apply -f /etc/kubernetes/halcyon/network/romana.yml
   register: deploy_weave
   when: (kube_sdn == 'romana')
   ignore_errors: true

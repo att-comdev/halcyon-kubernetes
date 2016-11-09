@@ -16,7 +16,8 @@
 
 bootstrap_os: ubuntu
 init_token: ac7da3.b2cofcda6ab01976
-public_iface: enp0s8
+public_iface: enp0s3
+nat_iface: enp0s3
 kubelet_hostname_override: true
 
 # Kubernetes Control Host:
@@ -28,3 +29,6 @@ kube_sdn: romana
 
 #Kubernetes Add-Ons
 kube_dashboard: true
+
+# SDN-Specific Config
+romana_version: v0.9.3.4
