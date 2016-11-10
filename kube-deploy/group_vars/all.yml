@@ -24,6 +24,7 @@ kubelet_hostname_override: true
 kubectl_endpoint: kube1
 
 # Kubernetes SDN Deployment:
+kube_cluster_ip_cidr: 10.96.0.0/12
 kube_sdn_deploy: true
 kube_sdn: romana
 
@@ -31,4 +32,4 @@ kube_sdn: romana
 kube_dashboard: true
 
 # SDN-Specific Config
-romana_version: v0.9.3.4
+romana_version: v0.9.3.5

@@ -14,5 +14,10 @@
 # limitations under the License.
 #
 
+- name: add route for service cluster ip range
+  shell: ip route add {{ kube_cluster_ip_cidr }} dev {{ public_iface }}
+  when: not (public_iface == nat_iface)
+  ignore_errors: true
+
 - include: prep-romana.yml
   when: (kube_sdn == 'romana')

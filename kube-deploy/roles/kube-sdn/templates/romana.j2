@@ -73,7 +73,7 @@ spec:
         - --romana-root=http://10.99.99.99:9600
         - --interface={{ public_iface }}
         - --nat-interface={{ nat_iface }}
-        - --cluster-ip-cidr=10.96.0.0/12
+        - --cluster-ip-cidr={{ kube_cluster_ip_cidr }}
         securityContext:
           privileged: true
         volumeMounts:
