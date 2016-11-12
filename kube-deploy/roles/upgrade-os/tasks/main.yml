@@ -16,3 +16,6 @@
 
 - include: ubuntu.yml
   when: bootstrap_os == "ubuntu"
+
+- include: centos.yml
+  when: bootstrap_os == "centos"
