@@ -5,7 +5,7 @@ Ansible playbooks for a kubadm-based Kubernetes deployment, on supporting any cl
 
 **Currently Supported:**
 
-  * OS: Ubuntu 16.04 *(Centos 7 coming soon)*
+  * OS: Ubuntu 16.04 and CentOS 7 *(CoreOS coming soon)*
   * Network Deployment Options  *(Calico, Canal, Romana, Weave)*
   * Providers: Virtualbox / Openstack *(AWS coming soon)*
 
