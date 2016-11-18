@@ -26,7 +26,14 @@ This project was originally implemented as a Vagrant deployment. If you are look
 2. Deploy via Ansible
 
 
+## Add-Ons
+This project will also support add-ons; both Kubernetes native add-ons as well as projects such as (https://github.com/kubernetes/helm)[Helm] (for developing Kubernetes Helm (https://github.com/kubernetes/charts)[Charts]). A Current list of add-ons include:
+
+  - Kubernetes Dashboard
+  - Helm
+
+You will find these options in the `group_vars/all.yml` file.
+
 # TODO
 
-* Add CentOS Support
 * Terraform-based Deployment Options will be provided in another repository soon!

@@ -14,5 +14,20 @@
 # limitations under the License.
 #
 
-- include: addons-dashboard.yml
-- include: addons-helm.yml
+- name: fetching get_helm.sh script
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get
+    dest: /root/get_helm.sh
+    mode: 0700
+  when: kube_addons_enabled and "{{kube_addons.kube_helm is defined}}"
+  ignore_errors: true
+
+- name: deploying helm tool
+  command: sh /root/get_helm.sh
+  when: kube_addons_enabled and "{{kube_addons.kube_helm is defined}}"
+  ignore_errors: true
+
+- name: initializing helm deployment
+  command: /usr/local/bin/helm init
+  when: kube_addons_enabled and "{{kube_addons.kube_helm is defined}}"
+  ignore_errors: true

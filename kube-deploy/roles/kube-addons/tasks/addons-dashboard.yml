@@ -14,5 +14,7 @@
 # limitations under the License.
 #
 
-- include: addons-dashboard.yml
-- include: addons-helm.yml
+- name: deploying the kubernetes dashboard
+  shell: kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+  when: kube_addons_enabled and "{{kube_addons.kube_dashboard is defined}}"
+  ignore_errors: true
