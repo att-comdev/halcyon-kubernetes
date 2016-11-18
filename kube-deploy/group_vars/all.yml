@@ -13,23 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+## Deployment Options:
 bootstrap_os: ubuntu
-init_token: ac7da3.b2cofcda6ab01976
 public_iface: enp0s3
 nat_iface: enp0s3
-kubelet_hostname_override: true
-
-# Kubernetes Control Host:
+#
+#
+## Kubernetes Parameters:
 kubectl_endpoint: kube1
-
-# Kubernetes SDN Deployment:
+init_token: ac7da3.b2cofcda6ab01976
+kubelet_hostname_override: true
+#
+#
+## Kubernetes SDN Deployment Options:
 kube_cluster_ip_cidr: 10.96.0.0/12
 kube_sdn_deploy: true
 kube_sdn: romana
-
-#Kubernetes Add-Ons
-kube_dashboard: true
-
-# SDN-Specific Config
 romana_version: v0.9.3.5
+#
+#
+## Kubernetes Add-Ons:
+# Optional Items: kube_dashboard, kube_helm (more to come).
+kube_addons_enabled: true
+kube_addons:
+  - kube_dashboard
+  - kube_helm
