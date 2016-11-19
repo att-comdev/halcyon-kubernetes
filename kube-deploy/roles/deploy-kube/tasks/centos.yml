@@ -36,7 +36,7 @@
 - name: install kubeadm and required prereqs
   yum: name={{ item }} update_cache=yes state=present state=latest
   with_items:
-  - docker
+  - docker-engine
   - kubelet
   - kubeadm
   - kubectl
@@ -72,4 +72,3 @@
 
 - name: restart kubelet
   command: systemctl restart kubelet
-
