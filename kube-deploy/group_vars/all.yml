@@ -21,14 +21,15 @@ nat_iface: enp0s3
 #
 ## Kubernetes Parameters:
 kubectl_endpoint: kube1
-init_token: ac7da3.b2cofcda6ab01976
 kubelet_hostname_override: true
+init_token: ac7da3.b2cofcda6ab01976
+kube_version: v1.5.0-beta.1
 #
 #
 ## Kubernetes SDN Deployment Options:
 kube_cluster_ip_cidr: 10.96.0.0/12
 kube_sdn_deploy: true
-kube_sdn: romana
+kube_sdn: weave
 romana_version: v0.9.3.6
 #
 #
