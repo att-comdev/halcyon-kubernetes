@@ -33,7 +33,7 @@
   ignore_errors: true
 
 
-#Testing to see which SDN's are currently installed, if any. 
+#Testing to see which SDN's are currently installed, if any.
 - name: set fact when weave is deployed
   set_fact:
     weave_deployed: true
@@ -96,6 +96,23 @@
     romana_deployed: false
   when: sdn_deployed_romana|skipped
 
+- name: check for existing flannel deployment
+  shell: kubectl get pods -o wide --all-namespaces
+  when: kube_podlist.stdout | search("flannel")
+  register: sdn_deployed_flannel
+  ignore_errors: true
+
+- name: set Fact when flannel is deployed
+  set_fact:
+    flannel_deployed: true
+    sdn_deployed: true
+  when: sdn_deployed_flannel|changed
+
+- name: set Fact when flannel is not deployed
+  set_fact:
+    flannel_deployed: false
+  when: sdn_deployed_flannel|skipped
+
 - name: set fact when no SDN is deployed
   set_fact:
     sdn_deployed: false
@@ -114,7 +131,7 @@
   when: kube_sdn_deploy and calico_deployed == false and sdn_deployed == false and kube_sdn == "calico"
 
 
-- name: ceploy canal
+- name: deploy canal
   include: kube-canal.yml
   when: kube_sdn_deploy and canal_deployed == false and sdn_deployed == false and kube_sdn == "canal"
 
@@ -122,6 +139,11 @@
 - name: deploy romana
   include: kube-romana.yml
   when: kube_sdn_deploy and romana_deployed == false and sdn_deployed == false and kube_sdn == "romana"
+
+
+- name: deploy flannel
+  include: kube-flannel.yml
+  when: kube_sdn_deploy and flannel_deployed == false and sdn_deployed == false and kube_sdn == "flannel"
 
 
 - name: creating sdn deployment artifact

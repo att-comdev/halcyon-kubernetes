@@ -31,7 +31,14 @@
 
 - name: initialize the kubernetes master
   shell: "kubeadm init --token {{ init_token }} --api-advertise-addresses {{ kube_api_endpoint.stdout }}"
-  when: "'localhost:8080 was refused' in kube_bootstrap.stderr"
+  when: "'localhost:8080 was refused' in kube_bootstrap.stderr and kube_sdn != 'flannel'"
+  register: initout
+  ignore_errors: true
+
+# The pod network CIDR is hardcoded in the reference flannel CNI templates
+- name: initialize the kubernetes master for flannel
+  shell: "kubeadm init --token {{ init_token }} --api-advertise-addresses {{ kube_api_endpoint.stdout }} --pod-network-cidr=10.244.0.0/16"
+  when: "'localhost:8080 was refused' in kube_bootstrap.stderr and kube_sdn == 'flannel'"
   register: initout
   ignore_errors: true
 
