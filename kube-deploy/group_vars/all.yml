@@ -29,7 +29,7 @@ kubelet_hostname_override: true
 kube_cluster_ip_cidr: 10.96.0.0/12
 kube_sdn_deploy: true
 kube_sdn: romana
-romana_version: v0.9.3.5
+romana_version: v0.9.3.6
 #
 #
 ## Kubernetes Add-Ons:
