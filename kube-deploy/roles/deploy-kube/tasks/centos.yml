@@ -48,6 +48,19 @@
 - name: turn off SELinux
   command: setenforce 0
 
+- name: setting up docker unit drop-in dir
+  file: path=/etc/systemd/system/docker.service.d state=directory
+  when: docker_shared_mounts
+
+- name: setting up docker shared mounts
+  template: src="10-docker-shared-mounts.conf.j2" dest="/etc/systemd/system/docker.service.d/10-docker-shared-mounts.conf" mode=0640
+  when: docker_shared_mounts
+  register: dsm
+
+- name: reload systemd config
+  command: systemctl daemon-reload
+  when: dsm.changed
+
 - name: start docker service
   service: enabled=yes state=started name=docker
 
