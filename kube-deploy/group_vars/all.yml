@@ -39,3 +39,7 @@ kube_addons_enabled: true
 kube_addons:
   - kube_dashboard
   - kube_helm
+#
+## Docker Daemon Options:
+# Shared mounts is required for several OpenStack Kolla-Kubernetes components.
+docker_shared_mounts: false
