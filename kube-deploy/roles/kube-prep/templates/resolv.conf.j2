@@ -1,0 +1,10 @@
+# Created by halcyon-kubernetes
+search default.svc.cluster.local svc.cluster.local cluster.local
+nameserver {{ kube_dns_ip_addr }}
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+options ndots:5
+# These options enable hostname resolution to work when the kube-dns service
+# is unavalible without an absolutely atrocious performance impact.
+options timeout:1
+options attempts:1
