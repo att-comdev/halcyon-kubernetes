@@ -1,0 +1,47 @@
+---
+# Copyright 2016, Port.direct, Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# This playbook could be made much nicer, and more efficient but doing things
+# this way make it easier to parse the hoops jumped through to enable the host
+# and pods running in the hosts network namespace to utilise k8s dns effectively
+
+- name: collect kube-dns ip from kubernetes masters
+  shell: kubectl get --namespace=kube-system svc kube-dns -o jsonpath={.spec.clusterIP}
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  with_items: "{{ groups['kube-masters'] }}"
+  register: kube_dns_ip
+
+- name: setting kube-dns ip fact
+  set_fact:
+    kube_dns_ip_addr: "{{ item.stdout }}"
+  with_items: "{{ kube_dns_ip.results }}"
+
+# Setup the host's resolve conf to use the k8s dns server
+- name: setting up host resolve conf to use kube dns
+  template: src="resolv.conf.j2" dest="/etc/resolv.conf" mode=0644
+
+- name: restart kubelet
+  command: systemctl restart kubelet
+
+# This rather ugly step is required to ensure that all pods have the correct resolv.conf
+- name: forcing all k8s containers to be recreated with correct dns settings
+  shell: docker ps | awk '$NF ~ /^k8s_/ { print $1}' | xargs -l1 docker rm -f
+  ignore_errors: true
+
+- name: waiting for k8s api to come back up
+  shell: while ! [[ $(kubectl cluster-info) ]]; do sleep 2 ; done
+  when: inventory_hostname in groups['kube-masters']
