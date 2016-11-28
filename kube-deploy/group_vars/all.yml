@@ -47,3 +47,5 @@ docker_shared_mounts: false
 ## Kolla-Kubernetes addtional options:
 # Setup the host to use the kube-dns nameservers (required for ceph)
 setup_host_kube_dns: false
+# Setup the host for ceph
+setup_host_ceph: false
