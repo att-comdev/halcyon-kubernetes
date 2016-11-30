@@ -26,7 +26,17 @@ This project was originally implemented as a Vagrant deployment. If you are look
     - kube-workers (as many as you'd like, excluding the master)
     - kube-control (same as your master)
 2. Make any needed/custom modifications to the included `kube-deploy/group_vars/all.yml` configuration file.
-2. From the `kube-deploy` folder, use Ansible to deploy your cluster: `ansible-playbook -i ../inventory.ini kube-deploy.yml`
+3. From the `kube-deploy` folder, use Ansible to deploy your cluster: `ansible-playbook -i ../inventory.ini kube-deploy.yml`
+
+
+## Development Friendly
+If you want to run these playbooks alone, and you want to destroy your cluster (in order to start over) you can issue the following ansible command against your inventory to "reset" `kubeadm`:
+
+```
+ansible -i ./inventory.ini all -b -m shell -a 'kubeadm reset'
+```
+
+This will destroy your cluster, and allow you to re-run these ansible playbooks again to rebuild a cluster.
 
 
 ## Add-Ons
