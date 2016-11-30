@@ -1,7 +1,7 @@
-# halcyon-kubernetes
+# Halcyon-Kubernetes Quickstart
 Please see [release notes](https://github.com/att-comdev/halcyon-kubernetes/releases) for current and planned features.
 
-Ansible playbooks for a kubadm-based Kubernetes deployment, on supporting any cloud and any kubeadm-enabled OS.
+Ansible playbooks for a kubadm-based Kubernetes deployment, on supporting any cloud and any kubeadm-enabled OS. This project is intended to provide a quick and lightweight solution for development of [Kolla-Kubernetes](http://docs.openstack.org/developer/kolla-kubernetes/quickstart.html), or any other type of development environment which requires the use of Helm and PVC's (i.e. Ceph) for Kubernetes resources.
 
 **Currently Supported:**
 
@@ -12,19 +12,21 @@ Ansible playbooks for a kubadm-based Kubernetes deployment, on supporting any cl
 
 **Requirements:**
 
-  * Ansible (version 2.1.1 and 2.1.2 tested)
-  * BYOC (bring your own cloud environments)
+  * Ansible (version 2.1.1 and up)
+  * BYOC (bring your own cloud environments) or Bare Metal Deployment Options
 
 Please see /docs/README.md for more information about SDN providers, plugins, and other useful information. Pull requests are welcome!
+
 
 ## Instructions
 This project was originally implemented as a Vagrant deployment. If you are looking for the Vagrant-based deployment for this, please go to the [vagrant-halcyon-kubernetes](https://github.com/att-comdev/halcyon-vagrant-kubernetes) repository. Vagrant deployment and use instructions are provided in that repository (including deployments directly to AWS, Openstack, and Virtualbox).
 
-1. Use your own inventory file, with the following groups:
+1. Use your own inventory file, with the following groups (see included `sample-inventory` file):
     - kube-masters (single node: for now)
     - kube-workers (as many as you'd like, excluding the master)
     - kube-control (same as your master)
-2. Deploy via Ansible
+2. Make any needed/custom modifications to the included `kube-deploy/group_vars/all.yml` configuration file.
+2. From the `kube-deploy` folder, use Ansible to deploy your cluster: `ansible-playbook -i ../inventory.ini kube-deploy.yml`
 
 
 ## Add-Ons
