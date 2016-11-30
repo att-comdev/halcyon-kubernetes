@@ -20,7 +20,7 @@
   ignore_errors: True
 
 - name: bootstrap | install python 2.x
-  raw: DEBIAN_FRONTEND=noninteractive apt-get install -y python-minimal aptitude
+  raw: DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y python-minimal aptitude
   when: need_bootstrap | failed
 
 - set_fact:

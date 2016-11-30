@@ -1,0 +1,14 @@
+[kube-masters]
+kube1 ansible_ssh_host=192.168.4.51
+
+[kube-workers]
+kube2 ansible_ssh_host=192.168.4.52
+kube3 ansible_ssh_host=192.168.4.53
+kube4 ansible_ssh_host=192.168.4.54
+
+[kube-control]
+kube1
+
+[kube-cluster:children]
+kube-masters
+kube-workers
