@@ -28,3 +28,14 @@
 - name: upgrade the entire system in preparation for next steps
   yum: name=* state=latest
 
+- name: installing epel
+  shell: yum install -y epel-release
+  when: setup_host_ceph
+
+- name: installing ceph repo
+  shell: rpm -Uhv http://download.ceph.com/rpm-jewel/el7/noarch/ceph-release-1-1.el7.noarch.rpm
+  when: setup_host_ceph
+
+- name: installing ceph
+  shell: yum install -y ceph
+  when: setup_host_ceph

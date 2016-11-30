@@ -28,3 +28,7 @@
 
 - name: upgrade the entire system in preparation for next steps
   apt: upgrade=full update_cache=yes
+
+- name: installing ceph
+  shell: apt-get update && apt-get install -y ceph
+  when: setup_host_ceph
