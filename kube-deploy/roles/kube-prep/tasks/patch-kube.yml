@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, JinkIT, and it's Authors.
+# Copyright 2016, Port.direct, LTD
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +14,7 @@
 # limitations under the License.
 #
 
-- name: deploying helm tool
-  shell: curl -L http://storage.googleapis.com/kubernetes-helm/helm-{{ helm_version }}-linux-amd64.tar.gz | tar zxv --strip 1 -C /tmp; chmod +x /tmp/helm; mv /tmp/helm /usr/local/bin/helm
-  when: kube_addons_enabled and "{{kube_addons.kube_helm is defined}}"
-  ignore_errors: true
-
-- name: initializing helm deployment
-  command: /usr/local/bin/helm init
-  when: kube_addons_enabled and "{{kube_addons.kube_helm is defined}}"
+- name: patch kube-controller-manager to support ceph pvc creation
+  command: sed -i "s|gcr.io/google_containers/kube-controller-manager-amd64:{{ kube_version }}|quay.io/attcomdev/kube-controller-manager:v1.5.0-beta.1|g" /etc/kubernetes/manifests/kube-controller-manager.json
+  when: patch_kube_ceph and inventory_hostname in groups['kube-masters']
   ignore_errors: true
