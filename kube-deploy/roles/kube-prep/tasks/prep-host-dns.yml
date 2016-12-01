@@ -30,6 +30,26 @@
     kube_dns_ip_addr: "{{ item.stdout }}"
   with_items: "{{ kube_dns_ip.results }}"
 
+- name: getting current external dns ip from kubernetes masters
+  shell: cat /etc/resolv.conf | awk '$1 == "nameserver" { print $NF }' | head -n1
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  with_items: "{{ groups['kube-masters'] }}"
+  register: external_dns_ip
+
+- name: setting external-dns ip fact
+  set_fact:
+    external_dns_ip_addr: "{{ item.stdout }}"
+  with_items: "{{ external_dns_ip.results }}"
+
+- name: telling network manager to leave resolv.conf alone
+  shell: sed -i '/\[main\]/adns=none' /etc/NetworkManager/NetworkManager.conf
+  when: bootstrap_os == "centos"
+
+- name: disabling resolvconf
+  shell: rm -f /etc/resolv.conf && cp /run/resolvconf/resolv.conf /etc/resolv.conf
+  when: bootstrap_os == "ubuntu"
+
 # Setup the host's resolve conf to use the k8s dns server
 - name: setting up host resolve conf to use kube dns
   template: src="resolv.conf.j2" dest="/etc/resolv.conf" mode=0644
