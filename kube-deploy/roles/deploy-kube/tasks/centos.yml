@@ -50,19 +50,27 @@
 
 - name: setting up docker unit drop-in dir
   file: path=/etc/systemd/system/docker.service.d state=directory
-  when: docker_shared_mounts
+  when: docker_shared_mounts or proxy_enable
 
 - name: setting up docker shared mounts
   template: src="10-docker-shared-mounts.conf.j2" dest="/etc/systemd/system/docker.service.d/10-docker-shared-mounts.conf" mode=0640
   when: docker_shared_mounts
   register: dsm
 
+# Vagrant's proxyconf plugin doesn't properly set up docker proxy and
+# even if it did, would require a vargrant reload after docker install
+# in order to take effect.
+- name: setting up docker proxy
+  template: src="20-docker-proxy.conf.j2" dest="/etc/systemd/system/docker.service.d/20-docker-proxy.conf" mode=0640
+  when: proxy_enable
+  register: docker_proxy
+
 - name: reload systemd config
   command: systemctl daemon-reload
-  when: dsm.changed
+  when: dsm.changed or docker_proxy.changed
 
 - name: start docker service
-  service: enabled=yes state=started name=docker
+  service: enabled=yes state=restarted name=docker
 
 - name: start kubelet service
   service: enabled=yes state=started name=kubelet
