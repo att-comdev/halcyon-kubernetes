@@ -13,14 +13,14 @@
 # limitations under the License.
 #
 
-- name: Update custom image for kube controller
-  lineinfile:
-    dest=/etc/kubernetes/manifests/kube-controller-manager.json
-    regexp="image"
-    backrefs=yes
-    line="\t"image\"{{ ":" }}{{" "}}"{{ controller_custom_image }}",\"
-    state=present
-  ignore_errors: True
+#- name: Update custom image for kube controller
+#  lineinfile:
+#    dest=/etc/kubernetes/manifests/kube-controller-manager.json
+#    regexp="image"
+#    backrefs=yes
+#    line="\t"image\"{{ ":" }}{{" "}}"{{ controller_custom_image }}",\"
+#    state=present
+#  ignore_errors: True
 
 #- name: Update custom image for etcd
 #  lineinfile:
