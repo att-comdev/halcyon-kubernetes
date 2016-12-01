@@ -33,7 +33,7 @@ kube_sdn_deploy: true
 kube_sdn: weave
 #
 ## Kubernetes SDN Versioning:
-calico_version: v1.6
+calico_version: v2.0
 romana_version: v0.9.3.6
 #
 #

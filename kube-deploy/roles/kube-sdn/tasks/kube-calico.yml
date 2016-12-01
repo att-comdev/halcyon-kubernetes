@@ -26,7 +26,7 @@
   ignore_errors: true
 
 - name: deploying calico for kubernetes
-  shell: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/master/{{ calico_version }}/getting-started/kubernetes/installation/hosted/calico.yaml
+  shell: kubectl apply -f http://docs.projectcalico.org/{{ calico_version }}/getting-started/kubernetes/installation/hosted/kubeadm/calico.yaml
   register: deploy_calico
   when: (kube_sdn == 'calico')
   ignore_errors: true
