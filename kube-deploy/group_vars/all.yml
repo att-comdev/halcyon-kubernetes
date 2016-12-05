@@ -45,7 +45,7 @@ kube_addons:
   - kube_helm
 #
 ## Helm Parameters:
-helm_version: v2.0.0
+helm_version: v2.0.1
 #
 ## Docker Daemon Options:
 # Shared mounts is required for several OpenStack Kolla-Kubernetes components.
