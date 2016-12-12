@@ -60,3 +60,11 @@ setup_host_ceph: false
 # This pulls in the quay.io/attcomdev/kube-controller-manager:v1.5.0-beta.1
 # to replace the upstream image
 patch_kube_ceph: false
+
+## Images for Kubernetes manifests. Use these for custom images if needed
+## Note: quay.io/attcomdev/kube-controller-manager:v1.5.0-beta.1 currently
+## patches the upstream image for ceph for PVC support
+#controller_custom_image: "quay.io/attcomdev/kube-controller-manager:v1.5.0-beta.1"
+#etcd_custom_image:
+#kubeapi_custom_image:
+#scheduler_custom_image:

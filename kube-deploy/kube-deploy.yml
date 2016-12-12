@@ -69,3 +69,11 @@
     - kube-addons
   tags:
     - kube-addons
+
+- hosts: kube-custom
+  gather_facts: true
+  become: yes
+  roles:
+    - kube-custom
+  tags:
+    - kube-custom
