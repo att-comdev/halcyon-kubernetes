@@ -15,6 +15,6 @@
 #
 
 - name: patch kube-controller-manager to support ceph pvc creation
-  command: sed -i "s|gcr.io/google_containers/kube-controller-manager-amd64:{{ kube_version }}|quay.io/attcomdev/kube-controller-manager:v1.5.0-beta.1|g" /etc/kubernetes/manifests/kube-controller-manager.json
+  command: sed -i "s|gcr.io/google_containers/kube-controller-manager-amd64:{{ kube_version }}|quay.io/attcomdev/kube-controller-manager:{{ kube_version }}|g" /etc/kubernetes/manifests/kube-controller-manager.json
   when: patch_kube_ceph and inventory_hostname in groups['kube-masters']
   ignore_errors: true
