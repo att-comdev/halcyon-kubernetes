@@ -15,7 +15,7 @@
 #
 
 - name: collect api endpoints from kubernetes masters
-  shell: ip addr show {{ public_iface }} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
+  shell: ip addr show {{ public_iface }} | grep "inet\b" | head -n 1 | awk '{print $2}' | cut -d/ -f1
   delegate_to: "{{ item }}"
   delegate_facts: true
   with_items: "{{ groups['kube-masters'] }}"

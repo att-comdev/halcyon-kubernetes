@@ -23,7 +23,7 @@
   debug: msg="{{ kube_bootstrap }}"
 
 - name: collect api endpoint from masters
-  shell: ip addr show {{ public_iface }} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1
+  shell: ip addr show {{ public_iface }} | grep "inet\b" | head -n 1 | awk '{print $2}' | cut -d/ -f1
   register: kube_api_endpoint
 
 - name: kubernetes master api endpoints
