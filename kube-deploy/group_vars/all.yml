@@ -18,6 +18,8 @@ bootstrap_os: ubuntu
 public_iface: enp0s3
 nat_iface: enp0s3
 proxy_enable: false
+#Only enable this if you are deploying on ARM or ARM64 with Fannel SDN provider
+arm_enabled: true
 #
 #
 ## Kubernetes Parameters:
@@ -31,7 +33,9 @@ kube_version: v1.5.1
 kube_cluster_ip_cidr: 10.96.0.0/12
 kube_service_dns_domain: cluster.local
 kube_sdn_deploy: true
-kube_sdn: weave
+#kube_sdn: weave
+kube_sdn: flannel
+
 #
 ## Kubernetes SDN Versioning:
 calico_version: v2.0
