@@ -14,18 +14,13 @@
 # limitations under the License.
 #
 
-- name: placeholder for flannel
+- name: Flannel Installation
   debug: msg="starting flannel installation"
 
 - name: ensure sdn bootstrap directory exists
   file: path=/etc/kubernetes/halcyon/network state=directory
   when: kube_sdn_deploy == True
   ignore_errors: true
-
-  #Local Hacking
-- name: Debug out the variables
-  debug:
-    msg: " kube_sdn_deploy: {{ kube_sdn_deploy }} , kube_sdn: {{ kube_sdn }} , arm_enabled: {{ arm_enabled }}"
 
 - name: deploying flannel for kubernetes
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
