@@ -17,6 +17,12 @@
 - name: Flannel Installation
   debug: msg="starting flannel installation"
 
+#For ARM Support Only
+- name: Check to see if the platform is ARM enabled
+  shell: uname -a | grep -i "arm"
+  register: arm_enabled
+  ignore_errors: true
+
 - name: ensure sdn bootstrap directory exists
   file: path=/etc/kubernetes/halcyon/network state=directory
   when: kube_sdn_deploy == True
@@ -25,21 +31,21 @@
 - name: deploying flannel for kubernetes
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   register: deploy_flannel
-  when: (kube_sdn == 'flannel' and arm_enabled == False)
+  when: (kube_sdn == 'flannel' and arm_enabled.rc != 0)
   ignore_errors: true
 
 - name: deploying flannel for kubernetes - ARM support only
   shell: curl -sSL https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml | sed "s/amd64/arm64/g" | kubectl create -f -
   register: deploy_flannel_arm
-  when: (kube_sdn == 'flannel' and arm_enabled == True)
+  when: (kube_sdn == 'flannel' and arm_enabled.rc == 0)
   ignore_errors: true
 
 - name: flannel deployment stdout
   debug: msg={{ deploy_flannel }}
   ignore_errors: true
-  when: arm_enabled == False
+  when: arm_enabled.rc != 0
 
 - name: flannel deployment stdout
   debug: msg={{ deploy_flannel_arm }}
   ignore_errors: true
-  when: arm_enabled == True
+  when: arm_enabled.rc == 0
