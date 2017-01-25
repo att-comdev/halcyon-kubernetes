@@ -24,19 +24,10 @@
     gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
             https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
-- name: Add docker repository with gpg keys
-  yum_repository:
-    name: docker
-    description: Repository for docker
-    baseurl: https://yum.dockerproject.org/repo/main/centos/7/
-    enabled: yes
-    gpgcheck: yes
-    gpgkey: https://yum.dockerproject.org/gpg
-
 - name: install kubeadm and required prereqs
   yum: name={{ item }} update_cache=yes state=present state=latest
   with_items:
-  - docker-engine
+  - docker
   - kubelet
   - kubeadm
   - kubectl
