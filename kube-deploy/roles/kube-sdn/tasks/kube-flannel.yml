@@ -15,37 +15,72 @@
 #
 
 - name: Flannel Installation
-  debug: msg="starting flannel installation"
+  debug:
+    msg: "Starting Flannel Installation"
 
-#For ARM Support Only
-- name: Check to see if the platform is ARM enabled
-  shell: uname -a | grep -i "arm"
-  register: arm_enabled
-  ignore_errors: true
+#Checking for Architecture Support
+- name: Checking for x86_64 architecture
+  set_fact:
+    host_arch: "amd64"
+  when: "'x86_64' in ansible_architecture"
+
+- name: Checking for arm architecture
+  set_fact:
+    host_arch: "arm"
+  when: "'arm' in ansible_architecture"
+
+- name: Checking for aarch64 architecture
+  set_fact:
+    host_arch: "arm64"
+  when: "'aarch64' in ansible_architecture"
+
+- name: Checking for arm64 architecture
+  set_fact:
+    host_arch: "arm64"
+  when: "'arm64' in ansible_architecture"
+
+- name: Checking for s390x architecture
+  set_fact:
+    host_arch: "s390x"
+  when: "'s390x' in ansible_architecture"
+
+- name: Checking for ppc64le architecture
+  set_fact:
+    host_arch: "ppc64le"
+  when: "'ppc64le' in ansible_architecture"
+
+- name: Assign default architecture if undefined
+  set_fact:
+    host_arch: "amd64"
+  when: host_arch is undefined
 
 - name: ensure sdn bootstrap directory exists
-  file: path=/etc/kubernetes/halcyon/network state=directory
+  file:
+    path: /etc/kubernetes/halcyon/network
+    state: directory
   when: kube_sdn_deploy == True
   ignore_errors: true
 
-- name: deploying flannel for kubernetes
+- name: deploying flannel for kubernetes - x86_64
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   register: deploy_flannel
-  when: (kube_sdn == 'flannel' and arm_enabled.rc != 0)
+  when: kube_sdn == 'flannel' and host_arch == "amd64"
   ignore_errors: true
 
-- name: deploying flannel for kubernetes - ARM support only
-  shell: curl -sSL https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml | sed "s/amd64/arm64/g" | kubectl create -f -
-  register: deploy_flannel_arm
-  when: (kube_sdn == 'flannel' and arm_enabled.rc == 0)
+- name: deploying flannel for kubernetes - Alternative Architectures
+  shell: curl -sSL https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml | sed "s/amd64/{{ host_arch }}/g" | kubectl create -f -
+  register: deploy_flannel_alt_arch
+  when: kube_sdn == 'flannel' and host_arch != "amd64"
   ignore_errors: true
-
-- name: flannel deployment stdout
-  debug: msg={{ deploy_flannel }}
-  ignore_errors: true
-  when: arm_enabled.rc != 0
 
 - name: flannel deployment stdout
-  debug: msg={{ deploy_flannel_arm }}
+  debug:
+    msg: "{{ deploy_flannel }}"
   ignore_errors: true
-  when: arm_enabled.rc == 0
+  when: host_arch == "amd64"
+
+- name: flannel deployment stdout
+  debug:
+    msg: "{{ deploy_flannel_alt_arch }} for architecture: {{ host_arch }}"
+  ignore_errors: true
+  when: host_arch != "amd64"
