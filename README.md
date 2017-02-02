@@ -40,7 +40,7 @@ This will destroy your cluster, and allow you to re-run these ansible playbooks 
 
 
 ## Add-Ons
-This project will also support add-ons; both Kubernetes native add-ons as well as projects such as (https://github.com/kubernetes/helm)[Helm] (for developing Kubernetes Helm (https://github.com/kubernetes/charts)[Charts]). A Current list of add-ons include:
+This project will also support add-ons; both Kubernetes native add-ons as well as projects such as [Helm](https://github.com/kubernetes/helm) (for developing Kubernetes Helm [Charts](https://github.com/kubernetes/charts)). A Current list of add-ons include:
 
   - Kubernetes Dashboard
   - Helm
