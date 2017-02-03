@@ -74,10 +74,16 @@
   when: dsm.changed or docker_proxy.changed
 
 - name: start docker service
-  service: enabled=yes state=restarted name=docker
+  service:
+    name: docker
+    enabled: true
+    state: restarted
 
 - name: start kubelet service
-  service: enabled=yes state=started name=kubelet
+  service:
+    name: kubelet
+    enabled: true
+    state: started
 
 # There was an issue with kubejoin checks not being updated to ignore the
 # /etc/kubernetes/ empty directories. A change was submitted, but hasn't
@@ -91,8 +97,14 @@
     src: 15-hostname-override.conf.j2
     dest: /etc/systemd/system/kubelet.service.d/15-hostname-override.conf
     mode: 0640
-  when: kubelet_hostname_override
+  when: kubelet_hostname_override == true
   register: kho
+
+- name: remove 15-hostname-override.conf
+  file:
+    path: /etc/systemd/system/kubelet.service.d/15-hostname-override.conf
+    state: absent
+  when: kubelet_hostname_override == false
 
 - name: reload systemd config
   command: systemctl daemon-reload

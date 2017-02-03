@@ -1,7 +1,9 @@
 ---
 
 - name: install the gpg key for kubeadm
-  apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
 
 - name: add the kubeadm apt repository
   apt_repository:
@@ -9,7 +11,10 @@
     state: present
 
 - name: install kubeadm and required prereqs
-  apt: name={{ item }} update_cache=yes state=present state=latest
+  apt:
+    name: "{{ item }}"
+    update_cache: true
+    state: present
   with_items:
   - docker.io
   - kubelet
@@ -18,11 +23,16 @@
   - kubernetes-cni
 
 - name: setting up docker unit drop-in dir
-  file: path=/etc/systemd/system/docker.service.d state=directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
   when: docker_shared_mounts or proxy_enable
 
 - name: setting up docker shared mounts
-  template: src="10-docker-shared-mounts.conf.j2" dest="/etc/systemd/system/docker.service.d/10-docker-shared-mounts.conf" mode=0640
+  template:
+    src: 10-docker-shared-mounts.conf.j2
+    dest: /etc/systemd/system/docker.service.d/10-docker-shared-mounts.conf
+    mode: 0640
   when: docker_shared_mounts
   register: dsm
 
@@ -31,7 +41,10 @@
 # installed and before continuing with the rest of the playbook, so we
 # configure it manually here.
 - name: setting up docker proxy
-  template: src="20-docker-proxy.conf.j2" dest="/etc/systemd/system/docker.service.d/20-docker-proxy.conf" mode=0640
+  template:
+    src: 20-docker-proxy.conf.j2
+    dest: /etc/systemd/system/docker.service.d/20-docker-proxy.conf
+    mode: 0640
   when: proxy_enable
   register: docker_proxy
 
@@ -40,18 +53,31 @@
   when: dsm.changed or docker_proxy.changed
 
 - name: restart docker service
-  service: name=docker state=restarted
+  service:
+    name: docker
+    state: restarted
   when: dsm.changed or docker_proxy.changed
 
 - name: add kubelet.service drop-in for hostname override
-  template: src="15-hostname-override.conf.j2" dest="/etc/systemd/system/kubelet.service.d/15-hostname-override.conf" mode=0640
-  when: kubelet_hostname_override
+  template:
+    src: 15-hostname-override.conf.j2
+    dest: /etc/systemd/system/kubelet.service.d/15-hostname-override.conf
+    mode: 0640
+  when: kubelet_hostname_override == true
   register: kho
+
+- name: remove 15-hostname-override.conf
+  file:
+    path: /etc/systemd/system/kubelet.service.d/15-hostname-override.conf
+    state: absent
+  when: kubelet_hostname_override == false
 
 - name: reload systemd config
   command: systemctl daemon-reload
   when: kho.changed
 
 - name: restart kubelet service
-  service: name=kubelet state=restarted
+  service:
+    name: kubelet
+    state: restarted
   when: kho.changed
