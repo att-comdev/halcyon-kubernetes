@@ -69,6 +69,13 @@
   when: proxy_enable
   register: docker_proxy
 
+- name: setting up insecure docker registry
+  template:
+    src: daemon.json-centos.j2
+    dest: /etc/docker/daemon.json
+    mode: 0644
+  when: docker_use_insecure_registry
+
 - name: reload systemd config
   command: systemctl daemon-reload
   when: dsm.changed or docker_proxy.changed
