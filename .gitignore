@@ -1,8 +1,11 @@
 # The Usual Suspects:
 .DS_Store
-.vagrant/
 kube-deploy/kube-deploy.retry
 ubuntu-xenial-16.04-cloudimg-console.log
 
 # Directories we don't really need:
 kube-deploy/roles/deploy-docker
+
+# Development
+.vagrant/
+venv/
