@@ -1,9 +1,7 @@
 venv: venv/bin/activate
 
 venv/bin/activate: requirements.txt
-	if [ ! -d venv ]; then \
-	    virtualenv --no-setuptools venv; \
-	fi
+	test -d venv || virtualenv --no-setuptools -p `which python` venv
 	. venv/bin/activate; pip install -r requirements.txt
 
 clean:
