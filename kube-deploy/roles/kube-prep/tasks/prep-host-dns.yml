@@ -59,7 +59,7 @@
 
 # This rather ugly step is required to ensure that all pods have the correct resolv.conf
 - name: forcing all k8s containers to be recreated with correct dns settings
-  shell: docker ps | awk '$NF ~ /^k8s_/ { print $1}' | xargs -l1 docker rm -f
+  shell: docker ps | awk '$NF ~ /^k8s_/ { print $1}' | xargs -l1 -r docker rm -f
   ignore_errors: true
 
 - name: waiting for k8s api to come back up
