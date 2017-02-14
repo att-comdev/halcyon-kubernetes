@@ -53,7 +53,7 @@
     src: daemon.json-ubuntu.j2
     dest: /etc/docker/daemon.json
     mode: 0644
-  when: docker_use_insecure_registry
+  when: registry_type == "docker_insecure"
 
 - name: reload systemd config
   command: systemctl daemon-reload
@@ -63,7 +63,7 @@
   service:
     name: docker
     state: restarted
-  when: dsm.changed or docker_proxy.changed or docker_use_insecure_registry
+  when: dsm.changed or docker_proxy.changed or registry_type == "docker_insecure"
 
 - name: add kubelet.service drop-in for hostname override
   template:
