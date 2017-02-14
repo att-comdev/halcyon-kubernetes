@@ -17,6 +17,7 @@
 - name: check for bootstrap
   shell: kubectl get nodes
   register: kube_bootstrap
+  failed_when: false
   ignore_errors: true
 
 - name: debug bootstrap output
@@ -41,6 +42,14 @@
   when: "'localhost:8080 was refused' in kube_bootstrap.stderr and kube_sdn == 'flannel'"
   register: initout
   ignore_errors: true
+
+- name: check kubectl after initializing the kubernetes master
+  shell: kubectl get nodes
+  register: kube_bootstrap
+  ignore_errors: true
+
+- name: debug kubectl output
+  debug: msg="{{ kube_bootstrap }}"
 
 # BELOW ARE TWO DEBUGGING OPTIONS:
 #- name: debug kubernetes init output
