@@ -53,6 +53,12 @@ helm_version: v2.1.0
 # Shared mounts is required for several OpenStack Kolla-Kubernetes components.
 docker_shared_mounts: false
 #
+## Registry Type:
+# Possible values: default, docker_insecure
+registry_type: default
+# For use with registry_type of docker_insecure
+docker_insecure_registry: 10.0.2.2:5000
+#
 ## Kolla-Kubernetes addtional options:
 # Setup the host to use the kube-dns nameservers (required for ceph)
 setup_host_kube_dns: false
